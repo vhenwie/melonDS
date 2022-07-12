@@ -6,6 +6,7 @@
 #include <streams/file_stream.h>
 #include <streams/file_stream_transforms.h>
 #include <file/file_path.h>
+#include <compat/strl.h>
 
 #include "Config.h"
 #include "Platform.h"
@@ -696,7 +697,7 @@ void retro_run(void)
    NDSCart_SRAMManager::Flush();
 }
 
-bool _handle_load_game(unsigned type, const struct retro_game_info *info, size_t num)
+static bool _handle_load_game(unsigned type, const struct retro_game_info *info)
 {
    /*
    * FIXME: Less bad than copying the whole data pointer, but still not great.
@@ -838,7 +839,7 @@ bool _handle_load_game(unsigned type, const struct retro_game_info *info, size_t
    Frontend::LoadBIOS();
    NDS::LoadROM((u8*)info->data, info->size, save_path.c_str(), Config::DirectBoot);
    
-   if(type == SLOT_1_2_BOOT)
+   if (type == SLOT_1_2_BOOT)
    {
       char gba_game_name[256];
       std::string gba_save_path;
@@ -849,14 +850,12 @@ bool _handle_load_game(unsigned type, const struct retro_game_info *info, size_t
       NDS::LoadGBAROM((u8*)info[1].data, info[1].size, gba_game_name, gba_save_path.c_str());
    }
 
-   (void)info;
-
    return true;
 }
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-   return _handle_load_game(NULL, info, NULL);
+   return _handle_load_game(0, info);
 }
 
 void retro_unload_game(void)
@@ -871,7 +870,7 @@ unsigned retro_get_region(void)
 
 bool retro_load_game_special(unsigned type, const struct retro_game_info *info, size_t num)
 {
-   return _handle_load_game(type, info, num);
+   return _handle_load_game(type, info);
 }
 
 #define MAX_SERIALIZE_TEST_SIZE 16 * 1024 * 1024 // The current savestate is around 7MiB so 16MiB should be enough for now
