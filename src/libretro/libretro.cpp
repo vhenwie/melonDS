@@ -822,7 +822,12 @@ bool _handle_load_game(unsigned type, const struct retro_game_info *info, size_t
       return false;
 
    char game_name[256];
-   fill_pathname_base_noext(game_name, info->path, sizeof(game_name));
+   const char *ptr = path_basename(info->path);
+   if (ptr)
+      strlcpy(game_name, ptr, sizeof(game_name));
+   else
+      strlcpy(game_name, info->path, sizeof(game_name));
+   path_remove_extension(game_name);
 
    save_path = std::string(retro_saves_directory) + std::string(1, PLATFORM_DIR_SEPERATOR) + std::string(game_name) + ".sav";
 
