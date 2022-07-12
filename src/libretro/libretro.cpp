@@ -843,8 +843,13 @@ static bool _handle_load_game(unsigned type, const struct retro_game_info *info)
    {
       char gba_game_name[256];
       std::string gba_save_path;
+      const char *ptr = path_basename(info[1].path);
+      if (ptr)
+         strlcpy(gba_game_name, ptr, sizeof(gba_game_name));
+      else
+         strlcpy(gba_game_name, info[1].path, sizeof(gba_game_name));
+      path_remove_extension(gba_game_name);
 
-      fill_pathname_base_noext(gba_game_name, info[1].path, sizeof(gba_game_name));
       gba_save_path = std::string(retro_saves_directory) + std::string(1, PLATFORM_DIR_SEPERATOR) + std::string(gba_game_name) + ".srm";
 
       NDS::LoadGBAROM((u8*)info[1].data, info[1].size, gba_game_name, gba_save_path.c_str());
