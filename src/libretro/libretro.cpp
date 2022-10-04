@@ -40,6 +40,7 @@ retro_game_info* cached_info;
 
 GPU::RenderSettings video_settings;
 
+bool libretro_supports_bitmasks = false;
 bool enable_opengl = false;
 bool using_opengl = false;
 bool opengl_linear_filtering = false;
@@ -82,7 +83,10 @@ void retro_init(void)
    initialize_screnlayout_data(&screen_layout_data);
 }
 
-void retro_deinit(void) {}
+void retro_deinit(void)
+{
+   libretro_supports_bitmasks = false;
+}
 
 unsigned retro_api_version(void)
 {
@@ -229,6 +233,9 @@ void retro_set_environment(retro_environment_t cb)
    };
 
    cb(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO, (void*)ports);
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
+      libretro_supports_bitmasks = true;
 
    static const struct retro_subsystem_memory_info gba_memory[] = {
       { "srm", 0x101 },
