@@ -52,7 +52,7 @@ bool swap_screen_toggled = false;
 
 const int SLOT_1_2_BOOT = 1;
 
-static bool categories_supported = false;
+static bool libretro_supports_option_categories = false;
 #ifdef HAVE_OPENGL
 static bool opengl_options = true;
 #endif
@@ -96,6 +96,7 @@ void retro_init(void)
 void retro_deinit(void)
 {
    libretro_supports_bitmasks = false;
+   libretro_supports_option_categories = false;
 }
 
 unsigned retro_api_version(void)
@@ -218,7 +219,7 @@ void retro_set_environment(retro_environment_t cb)
    struct retro_vfs_interface_info vfs_iface_info;
    environ_cb = cb;
 
-   libretro_set_core_options(environ_cb, &categories_supported);
+   libretro_set_core_options(environ_cb, &libretro_supports_option_categories);
 
    struct retro_core_options_update_display_callback update_display_cb;
    update_display_cb.callback = update_option_visibility;
