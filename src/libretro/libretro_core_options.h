@@ -250,6 +250,20 @@ struct retro_core_option_v2_definition option_defs_us[] = {
    },
 #endif
    {
+      "melonds_mic_input",
+      "Microphone Input",
+      NULL,
+      "Choose the type of noise that will be used as microphone input.",
+      NULL,
+      "audio",
+      {
+         { "Blow Noise",  NULL },
+         { "White Noise", NULL },
+         { NULL, NULL },
+      },
+      "Blow Noise"
+   },
+   {
       "melonds_audio_bitrate",
       "Audio Bitrate",
       NULL,
