@@ -1021,7 +1021,21 @@ void retro_cheat_reset(void)
 
 void retro_cheat_set(unsigned index, bool enabled, const char *code)
 {
-   (void)index;
-   (void)enabled;
-   (void)code;
+   if (!enabled)
+      return;
+   ARCode curcode;
+   std::string str(code);
+   char * pch =  &*str.begin();
+   memcpy(curcode.Name, code, 128);
+   curcode.Enabled=enabled;
+   curcode.CodeLen=0;
+   pch = strtok(pch, " +");
+   while (pch != NULL)
+   {
+    curcode.Code[curcode.CodeLen]=(u32)strtol(pch, NULL, 16);
+    log_cb(RETRO_LOG_INFO, "Adding Code %s (%d) \n",pch, curcode.Code[curcode.CodeLen]);
+    curcode.CodeLen++;
+    pch = strtok(NULL, " +");
+   }
+   AREngine::RunCheat(curcode);
 }
